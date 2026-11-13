@@ -18,27 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --]]
 
--- Version 2.10
-
--- Changelog:
--- 30.07.2018 * Merged PR from adrido from 25.02.2016: Added new Locks config Formspec.
--- 30.07.2018 * Removed deprecated minetest.env usage.
--- 30.07.2018 * Front side of chest does not get pipeworks image anymore.
---              Instead it always shows the locks texture as overlay.
--- 30.07.2018 * Fixed bug with pipeworks.
---            * Repaired password.
---            * Converted back to unix file format.
--- 08.05.2014 * Changed animation of shared locked furnace (removed pipeworks overlay on front, changed to new animation type)
--- 10.01.2013 * Added command to toggle for pipeworks output
---            * Added pipeworks support for chests and furnace.
--- 17.12.2013 * aborting input with ESC is possible again
--- 01.09.2013 * fixed bug in input sanitization
--- 31.08.2013 * changed receipe for key to avoid crafting conflickt with screwdriver
--- 10.07.2013 * removed a potential bug (now uses string:gmatch)
---            * added shared locked furnaces
-
-
-
 locks = {};
 
 minetest.register_privilege("openlocks", { description = "allows to open/use all locked objects", give_to_singleplayer = false});
