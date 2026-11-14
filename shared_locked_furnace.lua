@@ -3,17 +3,13 @@
 -- containing only the furnace and adopted slightly for my locks mod
 
 
--- 25.02.16 Added new Locks config Buttons.
--- 09.01.13 Added support for pipeworks.
-
-
 locks.furnace_add = {};
 locks.furnace_add.tiles_normal = {"default_furnace_top.png", "default_furnace_bottom.png", "default_furnace_side.png",
 		"default_furnace_side.png", "default_furnace_side.png", "default_furnace_front.png"};
 locks.furnace_add.tiles_active = {"default_furnace_top.png", "default_furnace_bottom.png", "default_furnace_side.png",
 		"default_furnace_side.png", "default_furnace_side.png", --"default_furnace_front_active.png"};
 		{
-			image = "default_furnace_front_active.png",
+			name = "default_furnace_front_active.png",
 			backface_culling = false,
 			animation = {
 				type = "vertical_frames",
@@ -45,7 +41,7 @@ if( locks.pipeworks_enabled ) then
 	"default_furnace_side.png^pipeworks_tube_connection_stony.png",
 	"default_furnace_side.png^pipeworks_tube_connection_stony.png",
 	{
-		image = "default_furnace_front_active.png",
+		name = "default_furnace_front_active.png",
 		backface_culling = false,
 		animation = {
 			type = "vertical_frames",
