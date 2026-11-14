@@ -3,17 +3,13 @@
 -- containing only the furnace and adopted slightly for my locks mod
 
 
--- 25.02.16 Added new Locks config Buttons.
--- 09.01.13 Added support for pipeworks.
-
-
 locks.furnace_add = {};
 locks.furnace_add.tiles_normal = {"default_furnace_top.png", "default_furnace_bottom.png", "default_furnace_side.png",
 		"default_furnace_side.png", "default_furnace_side.png", "default_furnace_front.png"};
 locks.furnace_add.tiles_active = {"default_furnace_top.png", "default_furnace_bottom.png", "default_furnace_side.png",
 		"default_furnace_side.png", "default_furnace_side.png", --"default_furnace_front_active.png"};
 		{
-			image = "default_furnace_front_active.png",
+			name = "default_furnace_front_active.png",
 			backface_culling = false,
 			animation = {
 				type = "vertical_frames",
@@ -45,7 +41,7 @@ if( locks.pipeworks_enabled ) then
 	"default_furnace_side.png^pipeworks_tube_connection_stony.png",
 	"default_furnace_side.png^pipeworks_tube_connection_stony.png",
 	{
-		image = "default_furnace_front_active.png",
+		name = "default_furnace_front_active.png",
 		backface_culling = false,
 		animation = {
 			type = "vertical_frames",
@@ -61,7 +57,7 @@ if( locks.pipeworks_enabled ) then
 	tubedevice = 1, tubedevice_receiver = 1 };
    locks.furnace_add.tube = {
 		insert_object = function(pos, node, stack, direction)
-			local meta = minetest.get_meta(pos)
+			local meta = core.get_meta(pos)
 			local inv = meta:get_inventory()
 			if direction.y == 1 then
 				return inv:add_item("fuel",stack)
@@ -70,7 +66,7 @@ if( locks.pipeworks_enabled ) then
 			end
 		end,
 		can_insert = function(pos, node, stack, direction)
-			local meta = minetest.get_meta(pos)
+			local meta = core.get_meta(pos)
 			local inv = meta:get_inventory()
 			if direction.y == 1 then
 				return inv:room_for_item("fuel", stack)
@@ -111,7 +107,7 @@ locks.furnace_inactive_formspec =
 	locks.get_authorize_button(6,0)..
 	locks.get_config_button(7,0)
 
-minetest.register_node("locks:shared_locked_furnace", {
+core.register_node("locks:shared_locked_furnace", {
 	description = "Shared locked furnace",
 	paramtype2 = "facedir",
 	groups = {cracky=2},
@@ -123,7 +119,7 @@ minetest.register_node("locks:shared_locked_furnace", {
 
 --	sounds = default.node_sound_stone_defaults(),
 	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
                 locks:lock_init( pos, locks.furnace_inactive_formspec)
 		meta:set_string("infotext", "Shared locked furnace")
 		local inv = meta:get_inventory()
@@ -148,7 +144,7 @@ minetest.register_node("locks:shared_locked_furnace", {
                 if( not(locks:lock_allow_dig( pos, player ))) then
                    return false;
                 end
-		local meta = minetest.get_meta(pos);
+		local meta = core.get_meta(pos);
 		local inv = meta:get_inventory()
 		if not inv:is_empty("fuel") then
 			return false
@@ -166,10 +162,10 @@ minetest.register_node("locks:shared_locked_furnace", {
                 if( not( locks:lock_allow_use( pos, player ))) then
                    return 0;
                 end
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		local inv = meta:get_inventory()
 		if listname == "fuel" then
-			if minetest.get_craft_result({method="fuel",width=1,items={stack}}).time ~= 0 then
+			if core.get_craft_result({method="fuel",width=1,items={stack}}).time ~= 0 then
 				if inv:is_empty("src") then
 					meta:set_string("infotext","Furnace is empty")
 				end
@@ -187,11 +183,11 @@ minetest.register_node("locks:shared_locked_furnace", {
                 if( not( locks:lock_allow_use( pos, player ))) then
                    return 0;
                 end
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		local inv = meta:get_inventory()
 		local stack = inv:get_stack(from_list, from_index)
 		if to_list == "fuel" then
-			if minetest.get_craft_result({method="fuel",width=1,items={stack}}).time ~= 0 then
+			if core.get_craft_result({method="fuel",width=1,items={stack}}).time ~= 0 then
 				if inv:is_empty("src") then
 					meta:set_string("infotext","Furnace is empty")
 				end
@@ -213,7 +209,7 @@ minetest.register_node("locks:shared_locked_furnace", {
 	end,
 })
 
-minetest.register_node("locks:shared_locked_furnace_active", {
+core.register_node("locks:shared_locked_furnace_active", {
 	description = "Furnace",
 	paramtype2 = "facedir",
 	light_source = 8,
@@ -227,7 +223,7 @@ minetest.register_node("locks:shared_locked_furnace_active", {
 
 --	sounds = default.node_sound_stone_defaults(),
 	on_construct = function(pos)
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
                 locks:lock_init( pos, locks.furnace_inactive_formspec)
 		meta:set_string("infotext", "Shared locked furnace");
 		local inv = meta:get_inventory()
@@ -239,7 +235,7 @@ minetest.register_node("locks:shared_locked_furnace_active", {
                 if( not(locks:lock_allow_dig( pos, player ))) then
                    return false;
                 end
-		local meta = minetest.get_meta(pos);
+		local meta = core.get_meta(pos);
 		local inv = meta:get_inventory()
 		if not inv:is_empty("fuel") then
 			return false
@@ -270,10 +266,10 @@ minetest.register_node("locks:shared_locked_furnace_active", {
                 if( not( locks:lock_allow_use( pos, player ))) then
                    return 0;
                 end
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		local inv = meta:get_inventory()
 		if listname == "fuel" then
-			if minetest.get_craft_result({method="fuel",width=1,items={stack}}).time ~= 0 then
+			if core.get_craft_result({method="fuel",width=1,items={stack}}).time ~= 0 then
 				if inv:is_empty("src") then
 					meta:set_string("infotext","Shared locked furnace (empty)")
 				end
@@ -291,11 +287,11 @@ minetest.register_node("locks:shared_locked_furnace_active", {
                 if( not( locks:lock_allow_use( pos, player ))) then
                    return 0;
                 end
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		local inv = meta:get_inventory()
 		local stack = inv:get_stack(from_list, from_index)
 		if to_list == "fuel" then
-			if minetest.get_craft_result({method="fuel",width=1,items={stack}}).time ~= 0 then
+			if core.get_craft_result({method="fuel",width=1,items={stack}}).time ~= 0 then
 				if inv:is_empty("src") then
 					meta:set_string("infotext","Shared locked furnace (empty)")
 				end
@@ -319,25 +315,25 @@ minetest.register_node("locks:shared_locked_furnace_active", {
 
 -- better make this a function specific to this mod to avoid trouble with the same function in default
 locks.hacky_swap_node = function(pos,name)
-	local node = minetest.get_node(pos)
-	local meta = minetest.get_meta(pos)
+	local node = core.get_node(pos)
+	local meta = core.get_meta(pos)
 	local meta0 = meta:to_table()
 	if node.name == name then
 		return
 	end
 	node.name = name
 	local meta0 = meta:to_table()
-	minetest.set_node(pos,node)
-	meta = minetest.get_meta(pos)
+	core.set_node(pos,node)
+	meta = core.get_meta(pos)
 	meta:from_table(meta0)
 end
 
-minetest.register_abm({
+core.register_abm({
 	nodenames = {"locks:shared_locked_furnace","locks:shared_locked_furnace_active"},
 	interval = 1.0,
 	chance = 1,
 	action = function(pos, node, active_object_count, active_object_count_wider)
-		local meta = minetest.get_meta(pos)
+		local meta = core.get_meta(pos)
 		for i, name in ipairs({
 				"fuel_totaltime",
 				"fuel_time",
@@ -356,7 +352,7 @@ minetest.register_abm({
 		local aftercooked
 		
 		if srclist then
-			cooked, aftercooked = minetest.get_craft_result({method = "cooking", width = 1, items = srclist})
+			cooked, aftercooked = core.get_craft_result({method = "cooking", width = 1, items = srclist})
 		end
 		
 		local was_active = false
@@ -395,10 +391,10 @@ minetest.register_abm({
 		local srclist = inv:get_list("src")
 		
 		if srclist then
-			cooked = minetest.get_craft_result({method = "cooking", width = 1, items = srclist})
+			cooked = core.get_craft_result({method = "cooking", width = 1, items = srclist})
 		end
 		if fuellist then
-			fuel, afterfuel = minetest.get_craft_result({method = "fuel", width = 1, items = fuellist})
+			fuel, afterfuel = core.get_craft_result({method = "fuel", width = 1, items = fuellist})
 		end
 
 		if not( fuel) or fuel.time <= 0 then
@@ -425,7 +421,7 @@ minetest.register_abm({
 })
 
 
-minetest.register_craft({
+core.register_craft({
    output = 'locks:shared_locked_furnace',
    recipe = {
       { 'default:furnace', 'locks:lock', '' },
