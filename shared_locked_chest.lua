@@ -1,7 +1,3 @@
--- 25.02.16 Added new Locks config Buttons.
--- 09.01.13 Added support for pipeworks.
-
-
 locks.chest_add = {};
 locks.chest_add.tiles  = {"default_chest_top.png", "default_chest_top.png", "default_chest_side.png",
                 "default_chest_side.png", "default_chest_side.png", "default_chest_front.png^locks_lock16.png"};

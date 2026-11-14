@@ -1,9 +1,3 @@
--- xDoors² mod by xyz
--- modified by Sokomine to allow locked doors that can only be opened/closed/dig up by the player who placed them
--- a little bit modified by addi to allow someone with the priv "opendoors" to open/close/dig all locked doors. 
--- Sokomine: modified again so that it uses the new locks-mod
--- 25.02.16 Added new Locks config Buttons.
-
 local door_bottom = {-0.5, -0.5, -0.5, 0.5, 0.5, -0.4}
 local door_top = {
     {-0.5, -0.5, -0.5, -0.3, 0.5, -0.4},

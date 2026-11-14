@@ -1,7 +1,3 @@
-
--- 25.02.16 Added new Locks config Buttons.
--- allow aborting with ESC in newer Versions of MT again
-
 -- a sign
 minetest.register_node("locks:shared_locked_sign_wall", {
         description = "Shared locked sign",
