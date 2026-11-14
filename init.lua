@@ -732,7 +732,7 @@ end)
 -- craftitem; that can be used to craft shared locked objects
 minetest.register_craftitem("locks:lock", {
         description = "Lock to lock and share objects",
-        image = "locks_lock16.png",
+        inventory_image = "locks_lock16.png",
 });
 
 
@@ -749,7 +749,7 @@ minetest.register_craft({
 -- a key allowes to open your own shared locked objects
 minetest.register_craftitem("locks:key", {
         description = "Key to open your own shared locked objects",
-        image = "locks_key32.png",
+        inventory_image = "locks_key32.png",
 });
 
 minetest.register_craft({
@@ -765,7 +765,7 @@ minetest.register_craft({
 -- in order to open shared locked objects of other players, a keychain is needed (plus the owner has to admit it via /add playername or through /set password)
 minetest.register_craftitem("locks:keychain", {
         description = "Keychain to open shared locked objects of others",
-        image = "locks_keychain32.png",
+        inventory_image = "locks_keychain32.png",
 });
 
 minetest.register_craft({
