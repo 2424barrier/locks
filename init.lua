@@ -20,8 +20,8 @@
 
 locks = {};
 
-minetest.register_privilege("openlocks", { description = "allows to open/use all locked objects", give_to_singleplayer = false});
-minetest.register_privilege("diglocks",  { description = "allows to open/use and dig up all locked objects", give_to_singleplayer = false});
+core.register_privilege("openlocks", { description = "allows to open/use all locked objects", give_to_singleplayer = false});
+core.register_privilege("diglocks",  { description = "allows to open/use and dig up all locked objects", give_to_singleplayer = false});
 
 
 locks.config_button = [[
@@ -53,7 +53,7 @@ locks.password_prompt = [[
 ]]
 function locks.prompt_password(playername, formname)
 	local fs = locks.password_prompt;
-	minetest.show_formspec(playername, formname, fs);
+	core.show_formspec(playername, formname, fs);
 end
 
 function locks.access_denied(playername, formname, ask_for_pw)
@@ -67,7 +67,7 @@ function locks.access_denied(playername, formname, ask_for_pw)
 	if ask_for_pw == true then
 		fs = fs.."button[0,2;3.5,1;enter_password;Enter Password]";
 	end
-	minetest.show_formspec(playername, formname, fs);
+	core.show_formspec(playername, formname, fs);
 end
 
 locks.access_granted_formspec = [[
@@ -78,7 +78,7 @@ locks.access_granted_formspec = [[
 	button_exit[1.5,2;3,1;proceed;Proceed]
 ]]
 function locks.access_granted(playername, formname)
-	minetest.show_formspec(playername, formname, locks.access_granted_formspec);
+	core.show_formspec(playername, formname, locks.access_granted_formspec);
 end
 
 locks.config_formspec = [[
@@ -128,7 +128,7 @@ locks.config_formspec = locks.config_formspec..locks.uniform_background
 
 locks.pipeworks_enabled = false;
 
-if( minetest.get_modpath("pipeworks") ~= nil ) then
+if( core.get_modpath("pipeworks") ~= nil ) then
    locks.pipeworks_enabled = true;
 end
 
@@ -146,7 +146,7 @@ function locks:lock_init( pos, default_formspec )
       return;
    end
 
-   local meta = minetest.get_meta(pos);
+   local meta = core.get_meta(pos);
    if( meta == nil ) then
       print( "Error: [locks] lock_init: unable to get meta data");
       return;
@@ -178,7 +178,7 @@ function locks:get_lockdata( pos )
       return;
    end
 
-   local meta = minetest.get_meta(pos);
+   local meta = core.get_meta(pos);
    if( meta == nil) then
       return;
    end
@@ -199,7 +199,7 @@ function locks:set_lockdata( pos, data )
       return;
    end
 
-   local meta = minetest.get_meta(pos);
+   local meta = core.get_meta(pos);
    if( meta == nil) then
       return;
    end
@@ -228,7 +228,7 @@ function locks:lock_set_owner( pos, player_or_name, description )
       return false;
    end
 
-   local meta = minetest.get_meta(pos);
+   local meta = core.get_meta(pos);
    if( meta == nil ) then
       print( "Error: [locks] lock_set_owner: unable to get meta data");
       return;
@@ -258,7 +258,7 @@ function locks:lock_allow_dig( pos, player )
       return false;
    end
 
-   local meta = minetest.get_meta(pos);
+   local meta = core.get_meta(pos);
    local lock_owner = meta:get_string("owner");
 
    -- locks who lost their owner can be opened/digged by anyone
@@ -272,7 +272,7 @@ function locks:lock_allow_dig( pos, player )
    end
 
    -- players with diglocks priv can dig up locked objects as well
-   if( minetest.check_player_privs(player:get_player_name(), {diglocks=true})) then
+   if( core.check_player_privs(player:get_player_name(), {diglocks=true})) then
      return true;
    end
 
@@ -298,7 +298,7 @@ function locks:lock_allow_use( pos, player )
    end
 
    local name = player:get_player_name();
-   local meta = minetest.get_meta(pos);
+   local meta = core.get_meta(pos);
 
    -- pipeworks sends a special username
    if( player.is_fake_player) then
@@ -314,7 +314,7 @@ function locks:lock_allow_use( pos, player )
 
       if(     not( player:get_inventory():contains_item("main","locks:keychain 1"))
           and not( player:get_inventory():contains_item("main","locks:key 1"))) then
-          minetest.chat_send_player( name, "You do not have a key or a keychain. Without that you can't use your shared locked objects!");
+          core.chat_send_player( name, "You do not have a key or a keychain. Without that you can't use your shared locked objects!");
           return false;
       end
 
@@ -322,7 +322,7 @@ function locks:lock_allow_use( pos, player )
    else
 
       if( not( player:get_inventory():contains_item("main","locks:keychain 1"))) then
-         minetest.chat_send_player(name, "You do not have a keychain. Without that you can't open shared locked objects of other players!");
+         core.chat_send_player(name, "You do not have a keychain. Without that you can't open shared locked objects of other players!");
          return false;
       end
    end
@@ -334,12 +334,12 @@ function locks:lock_allow_use( pos, player )
 
 
    if( meta == nil ) then
-      minetest.chat_send_player( name, "Error: Could not access metadata of this shared locked object.");
+      core.chat_send_player( name, "Error: Could not access metadata of this shared locked object.");
       return false;
    end
 
    -- players with openlocks priv can open locked objects
-   if( minetest.check_player_privs(name, {openlocks=true})) then
+   if( core.check_player_privs(name, {openlocks=true})) then
       return true;
    end
 
@@ -368,7 +368,7 @@ function locks:lock_allow_use( pos, player )
 
    -- the lock may have a password set. If this is the case then ask the user for it
    if( meta:get_string( "password" ) and meta:get_string( "password" ) ~= "" ) then
-      minetest.chat_send_player(name, "Access denied. Right-click and enter password first!");
+      core.chat_send_player(name, "Access denied. Right-click and enter password first!");
       return false;
    end
 
@@ -390,7 +390,7 @@ function locks:lock_handle_input( pos, formname, fields, player )
       return false;
    end
 
-   local meta = minetest.get_meta(pos);
+   local meta = core.get_meta(pos);
    if( meta == nil ) then
       print( "Error: [locks] lock_handle_input: unable to get meta data");
       return;
@@ -403,7 +403,7 @@ function locks:lock_handle_input( pos, formname, fields, player )
    	if fields.locks_config then
 		-- else the player could set a new pw and gain access anyway...
 		if( owner and owner ~= "" and owner ~= name ) then
-			minetest.chat_send_player(name, "Only the owner can change the configuration.");
+			core.chat_send_player(name, "Only the owner can change the configuration.");
 			return;
 		end
 		local allow_pipeworks = "false";
@@ -415,19 +415,19 @@ function locks:lock_handle_input( pos, formname, fields, player )
 			allow_pipeworks,
 			data.allowed_users:gsub(",","\n"),
 			meta:get_string("password"));
-		minetest.show_formspec(player:get_player_name(), "locks_config:"..minetest.pos_to_string(pos), fs);
+		core.show_formspec(player:get_player_name(), "locks_config:"..core.pos_to_string(pos), fs);
 		return true; -- we could full handle the input. No need to continue. so we return true
 	elseif fields.locks_authorize then
 		local data = locks:get_lockdata( pos );
 
 		if name == data.owner then
-			minetest.chat_send_player(name, "You are the owner of this object. Its not required to enter a password.",false)
-		elseif minetest.string_to_privs(meta:get_string("allowed_users"))[name] then
-			minetest.chat_send_player(name, "You are already authorized in the whitelist. Its not required to enter a password.",false)
+			core.chat_send_player(name, "You are the owner of this object. Its not required to enter a password.",false)
+		elseif core.string_to_privs(meta:get_string("allowed_users"))[name] then
+			core.chat_send_player(name, "You are already authorized in the whitelist. Its not required to enter a password.",false)
 		else
 
 			local fs = locks.password_prompt;
-			minetest.show_formspec(name, "locks_authorize:"..minetest.pos_to_string(pos), fs);
+			core.show_formspec(name, "locks_authorize:"..core.pos_to_string(pos), fs);
 		end
 		return true;
 	end
@@ -444,7 +444,7 @@ function locks:lock_handle_input( pos, formname, fields, player )
    if( fields.locks_sent_lock_command == "/help" ) then
 
       if( name == meta:get_string( "owner" )) then
-         minetest.chat_send_player(name, "The following commands are available to you, the owner of this object, only:\n"..
+         core.chat_send_player(name, "The following commands are available to you, the owner of this object, only:\n"..
             "  /help           Shows this help text.\n"..
             "  /add <name>     Player <name> can now unlock this object with any key.\n"..
             "  /del <name>     Player <name> can no longer use this object.\n"..
@@ -453,15 +453,15 @@ function locks:lock_handle_input( pos, formname, fields, player )
             "  /pipeworks      Toggles permission for pipeworks to take inventory out of the shared locked object.\n");
 
       else if( locks:lock_allow_use( pos, player )) then
-         minetest.chat_send_player(name, "This locked object is owned by "..tostring( meta:get_string( "owner" ))..".\n"..
+         core.chat_send_player(name, "This locked object is owned by "..tostring( meta:get_string( "owner" ))..".\n"..
             "You do have access to it.\n");
 
       else if( meta:get_string( "password" ) ~= "" ) then
-         minetest.chat_send_player(name, "This locked object is owned by "..tostring( meta:get_string( "owner" ))..".\n"..
+         core.chat_send_player(name, "This locked object is owned by "..tostring( meta:get_string( "owner" ))..".\n"..
             "Enter the correct password to gain access.\n");
 
       else
-         minetest.chat_send_player(name, "This locked object is owned by "..tostring( meta:get_string( "owner" ))..".\n"..
+         core.chat_send_player(name, "This locked object is owned by "..tostring( meta:get_string( "owner" ))..".\n"..
             "There is no password set. You can only gain access if the owner grants it to you.");
 
       end end end -- lua is not the most intuitive language here....
@@ -470,12 +470,12 @@ function locks:lock_handle_input( pos, formname, fields, player )
 
    -- sanitize player input
    if( fields.locks_sent_lock_command:match("[^%a%d%s_%- /%:]")) then
-      minetest.chat_send_player(name, "Input contains unsupported characters. Allowed: a-z, A-Z, 0-9, _, -, :.");
+      core.chat_send_player(name, "Input contains unsupported characters. Allowed: a-z, A-Z, 0-9, _, -, :.");
       return;
    end
 
    if( #fields.locks_sent_lock_command > 60) then
-      minetest.chat_send_player(name, "Input too long. Only up to 80 characters supported.");
+      core.chat_send_player(name, "Input too long. Only up to 80 characters supported.");
       return;
    end
 
@@ -488,26 +488,26 @@ function locks:lock_handle_input( pos, formname, fields, player )
 
       -- no need to bother with trying other PWs if none is set...
       if( meta:get_string("password")=="" ) then
-          minetest.chat_send_player(name, "There is no password set. Access denied.");
+          core.chat_send_player(name, "There is no password set. Access denied.");
           return;
       end
 
       -- the player may have entered the right password already
       if( name == meta:get_string("pw_user")) then
          -- nothing to do - the player entered the right pw alredy
-          minetest.chat_send_player(name, "You have entered the right password already. Access granted.");
+          core.chat_send_player(name, "You have entered the right password already. Access granted.");
          return;
       end
 
       if( fields.locks_sent_lock_command ~= meta:get_string("password")) then
-          minetest.chat_send_player(name, "Wrong password. Access denied.");
+          core.chat_send_player(name, "Wrong password. Access denied.");
          return;
       end
 
       -- store the last user (this one) who entered the right pw
       meta:set_string( "pw_user", name );
 
-      minetest.chat_send_player(name, "Password confirmed. Access granted.");
+      core.chat_send_player(name, "Password confirmed. Access granted.");
       return;
    end
 
@@ -532,7 +532,7 @@ function locks:lock_handle_input( pos, formname, fields, player )
          txt = txt.."\nThe password for this lock is: \""..tostring( meta:get_string( "password" ).."\"");
       end
 
-      if( not( minetest.get_modpath("pipeworks") )) then
+      if( not( core.get_modpath("pipeworks") )) then
          txt = txt.."\nThe pipeworks mod is not installed. Install it if you wish support for tubes.";
       elseif( meta:get_int( "allow_pipeworks" ) == 1 ) then
          txt = txt.."\nTubes from pipeworks may be used to extract items out of/add items to this shared locked object.";
@@ -540,7 +540,7 @@ function locks:lock_handle_input( pos, formname, fields, player )
          txt = txt.."\nInput from tubes is accepted, but output to them is denied (default).";
       end
 
-      minetest.chat_send_player(name, txt );
+      core.chat_send_player(name, txt );
       return;
    end -- of /list
 
@@ -550,11 +550,11 @@ function locks:lock_handle_input( pos, formname, fields, player )
 
       if( meta:get_int('allow_pipeworks') == 1 ) then
          meta:set_int('allow_pipeworks', 0 );
-         minetest.chat_send_player( name, 'Output to pipework tubes is now DISABLED (input is still acceped).');
+         core.chat_send_player( name, 'Output to pipework tubes is now DISABLED (input is still acceped).');
          return;
       else
          meta:set_int('allow_pipeworks', 1 );
-         minetest.chat_send_player( name, 'Output to pipework tubes is now ENABLED. Connected tubes may insert and remove items.');
+         core.chat_send_player( name, 'Output to pipework tubes is now ENABLED. Connected tubes may insert and remove items.');
          return;
       end
    end
@@ -574,7 +574,7 @@ function locks:lock_handle_input( pos, formname, fields, player )
          help[2] = "";
       end
 
-      minetest.chat_send_player(name, "Old password: \""..tostring( meta:get_string( "password" ))..
+      core.chat_send_player(name, "Old password: \""..tostring( meta:get_string( "password" ))..
                       "\"\n Changed to new password: \""..tostring( help[2]).."\".");
 
 
@@ -584,13 +584,13 @@ function locks:lock_handle_input( pos, formname, fields, player )
       meta:set_string("pw_users","");
 
       if( help[2]=="") then
-         minetest.chat_send_player(name, "The password is empty and thus will be disabled.");
+         core.chat_send_player(name, "The password is empty and thus will be disabled.");
       end
       return;
    end
 
    if( help[2]==nil or help[2]=="") then
-      minetest.chat_send_player(name, "Error: Missing parameter (player name) for command \""..tostring( help[1] ).."\"." );
+      core.chat_send_player(name, "Error: Missing parameter (player name) for command \""..tostring( help[1] ).."\"." );
       return;
    end
 
@@ -609,12 +609,12 @@ function locks:lock_handle_input( pos, formname, fields, player )
    end
 
    if( help[1]=="/add" and found==true ) then
-      minetest.chat_send_player(name, "Player \""..tostring( help[2] ).."\" is already allowed to use this locked object. Nothing to do.");
+      core.chat_send_player(name, "Player \""..tostring( help[2] ).."\" is already allowed to use this locked object. Nothing to do.");
       return;
    end
 
    if( help[1]=="/del" and found==false) then
-      minetest.chat_send_player(name, "Player \""..tostring( help[2] ).."\" is not amongst the players allowed to use this locked object. Nothing to do.");
+      core.chat_send_player(name, "Player \""..tostring( help[2] ).."\" is not amongst the players allowed to use this locked object. Nothing to do.");
       return;
    end
 
@@ -622,12 +622,12 @@ function locks:lock_handle_input( pos, formname, fields, player )
    if( help[1]=="/add" ) then
 
       if( anz >= 6 ) then
-         minetest.chat_send_player(name, "Sorry, no more players can be added. To save space, only up to 6 players can be added. For more players please use groups!");
+         core.chat_send_player(name, "Sorry, no more players can be added. To save space, only up to 6 players can be added. For more players please use groups!");
          return;
       end
 
       if( name == help[2] ) then
-         minetest.chat_send_player(name, "You are already owner of this object.");
+         core.chat_send_player(name, "You are already owner of this object.");
          return;
       end
 
@@ -635,26 +635,26 @@ function locks:lock_handle_input( pos, formname, fields, player )
       if( help[2]:sub(1,1) == ":" ) then
  
          if( not( playergroups )) then
-            minetest.chat_send_player(name, "Sorry, this server does not support playergroups.");
+            core.chat_send_player(name, "Sorry, this server does not support playergroups.");
             return;
          end
 
          if( #help[2]<2 ) then
-            minetest.chat_send_player(name, "Please specify the name of the playergroup you want to add!");
+            core.chat_send_player(name, "Please specify the name of the playergroup you want to add!");
             return;
          end
 
          if( not( playergroups:is_playergroup(meta:get_string("owner"), help[2]:sub(2) ))) then
-            minetest.chat_send_player(name, "You do not have a playergroup named \""..tostring( help[2]:sub(2)).."\".");
+            core.chat_send_player(name, "You do not have a playergroup named \""..tostring( help[2]:sub(2)).."\".");
             return;
          end
 
       else
 
          -- check if the player exists
-         local privs = minetest.get_player_privs( help[2] );
+         local privs = core.get_player_privs( help[2] );
          if( not( privs ) or not( privs.interact )) then
-            minetest.chat_send_player(name, "Player \""..help[2].."\" not found or has no interact privs.");
+            core.chat_send_player(name, "Player \""..help[2].."\" not found or has no interact privs.");
             return;
          end
       end
@@ -662,9 +662,9 @@ function locks:lock_handle_input( pos, formname, fields, player )
       meta:set_string( "allowed_users", meta:get_string("allowed_users")..","..help[2] );
 
       if( help[2]:sub(1,1) == ":" ) then
-         minetest.chat_send_player(name, "All members of your playergroup "..tostring(help[2]:sub(2)).." may now use/access this locked object.");
+         core.chat_send_player(name, "All members of your playergroup "..tostring(help[2]:sub(2)).." may now use/access this locked object.");
       else
-         minetest.chat_send_player(name, help[2].." may now use/access this locked object.");
+         core.chat_send_player(name, help[2].." may now use/access this locked object.");
       end
       return;
    end
@@ -675,20 +675,20 @@ function locks:lock_handle_input( pos, formname, fields, player )
       userlist  = meta:get_string("allowed_users"):split( ","..help[2] );
       meta:set_string( "allowed_users", ( userlist[1] or "" )..(userlist[2] or "" ));
 
-      minetest.chat_send_player(name, "Access for player \""..tostring(help[2]).."\" has been revoked.");
+      core.chat_send_player(name, "Access for player \""..tostring(help[2]).."\" has been revoked.");
       return;
    end
 
-   minetest.chat_send_player(name, "Error: Command \""..tostring(help[1]).."\" not understood.");
+   core.chat_send_player(name, "Error: Command \""..tostring(help[1]).."\" not understood.");
 end
 
 
 --this is required to handle the locks control panel
-minetest.register_on_player_receive_fields(function(player, formname, fields)
+core.register_on_player_receive_fields(function(player, formname, fields)
 	local playername = player:get_player_name();
 	if formname:find("locks_config:") then -- search if formname contains locks
-		--minetest.chat_send_player(playername,dump(fields));
-		local pos = minetest.string_to_pos(formname:gsub("locks_config:",""))
+		--core.chat_send_player(playername,dump(fields));
+		local pos = core.string_to_pos(formname:gsub("locks_config:",""))
 		if fields.ok then
 			local data = locks:get_lockdata( pos )
 			data.allowed_users = fields.allowed_users:gsub("\n",",");
@@ -700,7 +700,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			data.password = fields.password;
 			locks:set_lockdata( pos, data );
 		elseif fields.pipeworks then
-			local meta = minetest.get_meta(pos);
+			local meta = core.get_meta(pos);
 			if fields.pipeworks == "true" then
 				meta:set_int( 'allow_pipeworks', 1 );
 			else
@@ -711,8 +711,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 	elseif formname:find("locks_authorize:") then
 		if fields.password and fields.password ~="" then
-			local pos = minetest.string_to_pos(formname:gsub("locks_authorize:",""))
-			local meta = minetest.get_meta(pos);
+			local pos = core.string_to_pos(formname:gsub("locks_authorize:",""))
+			local meta = core.get_meta(pos);
 			if meta:get_string("password")==fields.password then
 				locks.access_granted(playername, formname);
 				meta:set_string("pw_user", playername)
@@ -730,13 +730,13 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 end)
 
 -- craftitem; that can be used to craft shared locked objects
-minetest.register_craftitem("locks:lock", {
+core.register_craftitem("locks:lock", {
         description = "Lock to lock and share objects",
         inventory_image = "locks_lock16.png",
 });
 
 
-minetest.register_craft({
+core.register_craft({
         output = "locks:lock 2",
         recipe = {
                  {'default:steel_ingot', 'default:steel_ingot','default:steel_ingot'},
@@ -747,12 +747,12 @@ minetest.register_craft({
 
 
 -- a key allowes to open your own shared locked objects
-minetest.register_craftitem("locks:key", {
+core.register_craftitem("locks:key", {
         description = "Key to open your own shared locked objects",
         inventory_image = "locks_key32.png",
 });
 
-minetest.register_craft({
+core.register_craft({
         output = "locks:key",
         recipe = {
                  {'',                    'default:stick',      ''},
@@ -763,12 +763,12 @@ minetest.register_craft({
 
 
 -- in order to open shared locked objects of other players, a keychain is needed (plus the owner has to admit it via /add playername or through /set password)
-minetest.register_craftitem("locks:keychain", {
+core.register_craftitem("locks:keychain", {
         description = "Keychain to open shared locked objects of others",
         inventory_image = "locks_keychain32.png",
 });
 
-minetest.register_craft({
+core.register_craft({
         output = "locks:keychain",
         recipe = {
                  {'',                    'default:steel_ingot', '' },
@@ -776,7 +776,7 @@ minetest.register_craft({
                 }
         });
 
-dofile(minetest.get_modpath("locks").."/shared_locked_chest.lua");
-dofile(minetest.get_modpath("locks").."/shared_locked_sign_wall.lua");
-dofile(minetest.get_modpath("locks").."/shared_locked_xdoors2.lua");
-dofile(minetest.get_modpath("locks").."/shared_locked_furnace.lua");
+dofile(core.get_modpath("locks").."/shared_locked_chest.lua");
+dofile(core.get_modpath("locks").."/shared_locked_sign_wall.lua");
+dofile(core.get_modpath("locks").."/shared_locked_xdoors2.lua");
+dofile(core.get_modpath("locks").."/shared_locked_furnace.lua");

@@ -1,5 +1,5 @@
 -- a sign
-minetest.register_node("locks:shared_locked_sign_wall", {
+core.register_node("locks:shared_locked_sign_wall", {
         description = "Shared locked sign",
         drawtype = "signlike",
         tiles = {"locks_lock16.png^default_sign_wood.png"},
@@ -20,7 +20,7 @@ minetest.register_node("locks:shared_locked_sign_wall", {
 
 
         on_construct = function(pos)
-                local meta = minetest.get_meta(pos)
+                local meta = core.get_meta(pos)
                 -- prepare the lock of the sign
                 locks:lock_init( pos, 
                                 "size[8,4]"..
@@ -50,11 +50,11 @@ minetest.register_node("locks:shared_locked_sign_wall", {
                            or fields.locks_sent_lock_command=="") --compatibility
                     and locks:lock_allow_use( pos, sender )) then
 
-                    --print("Sign at "..minetest.pos_to_string(pos).." got "..dump(fields))
-                    local meta = minetest.get_meta(pos)
+                    --print("Sign at "..core.pos_to_string(pos).." got "..dump(fields))
+                    local meta = core.get_meta(pos)
                     fields.text = fields.text or "";
                     print((sender:get_player_name() or "").." wrote \""..fields.text..
-                                "\" to sign at "..minetest.pos_to_string(pos));
+                                "\" to sign at "..core.pos_to_string(pos));
                     meta:set_string("text", fields.text);
                     meta:set_string("infotext", '"'..fields.text..'"'.." ["..sender:get_player_name().."]");
 				end
@@ -64,7 +64,7 @@ minetest.register_node("locks:shared_locked_sign_wall", {
  });
 
 
-minetest.register_craft({
+core.register_craft({
    output = 'locks:shared_locked_sign_wall',
    recipe = {
       { 'default:sign_wall', 'locks:lock', '' },
